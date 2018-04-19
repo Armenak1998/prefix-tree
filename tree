@@ -1,0 +1,117 @@
+#include<iostream>
+using namespace std;
+class node {
+public:
+	node**child;
+	int size;
+	int * key;
+	string value;
+	node(string value1, int* key1=nullptr, node**child1=nullptr, int size1=0):value(value1),key(key1),size(size1),child(child1) {}
+	
+	
+	void insertchild(node*k) {
+		node**m = new node*[size];
+
+		for (int i = 0; i < size; i++)
+			m[i] = child[i];
+
+		delete[]child;
+
+		++size;
+
+		child = new node*[size];
+
+		for (int i = 0; i < size-1; i++)
+			child[i] = m[i];
+
+		child[size - 1] = k;
+	}
+
+
+};
+typedef pair<node*, bool> nobo;
+class prefixtree {
+	node*root;
+public:
+	prefixtree() {
+		root = new node("");
+	}
+	nobo insert(int key, string value) {
+
+		nobo b(nullptr, false);
+
+		node* a = root;
+
+		for (int i = 0; i < value.size(); i++) {
+			for (int j = 0; j < a->size; j++) {
+				if (a->child[j]->value[i] == value[i]) {
+					if (i == value.size()-1) {
+						if (a->child[j]->key == nullptr) {
+							int*o = new int(key);
+							a->child[j]->key = o;
+							b = make_pair(a->child[j], false);
+							return b;
+						}
+						else {
+							b = make_pair(a->child[j], false);
+							return b;
+						}
+					}
+					a = a->child[j];
+					goto aa;
+				}
+			}
+			node*c;
+			if (i != value.size()-1) {
+				c = new node(a->value + value[i]);
+				a->insertchild(c);
+				a = a->child[a->size - 1];
+			}
+			else {
+				int*o = new int(key);
+			c = new node(a->value + value[i],o);
+			a->insertchild(c);
+			b = make_pair(a->child[a->size - 1], true);
+			return b;
+			}
+		aa:extern int bch;
+		}
+		return b;
+	}
+
+	node* find(string value)const {
+
+		node* a = root;
+
+		for (int i = 0; i < value.size(); i++) {
+			for (int j = 0; j < a->size; j++) {
+				if (a->child[j]->value[i] == value[i]) {
+					a = a->child[j];
+					goto aa;
+				}
+			}
+			return nullptr;
+		aa:extern int bch;
+		}
+		return a;
+	}
+	
+};
+int main() {
+	prefixtree b;
+	b.insert(2, "pon");
+	b.insert(2, "xor");
+	node*m = b.find("mbn");
+	if (m) {
+		cout << *(m->key) << "\n";
+		for (int i = 0; i < m->value.size(); i++) {
+			cout << m->value[i];
+		}
+		cout << "\n";
+	}
+	else {
+		cout << "nullptr\n";
+	}
+	system("pause");
+	return 0;
+}
